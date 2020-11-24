@@ -1,0 +1,14 @@
+# Editor
+.vscode
+
+# Python virtual environment
+venv/
+
+# Cache and migrations
+*.pyc
+__pycache__/
+paws/**/migrations/*
+!paws/**/__init__.py
+
+# Data
+db.sqlite3
