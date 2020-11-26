@@ -1,8 +1,13 @@
 # Editor
-.vscode
+.vscode/
+# For future exceptions
+# .vscode/
+# !.vscode/settings.json
 
-# Python virtual environment
+# Environment
+.env
 venv/
+
 
 # Cache and migrations
 *.pyc
