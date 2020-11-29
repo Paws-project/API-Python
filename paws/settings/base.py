@@ -25,7 +25,9 @@ load_dotenv(BASE_DIR / "configs" / ".env")
 
 ALLOWED_HOSTS = []
 
-
+APP_NAME = "paws"
+ORGANIZATION_NAME = "shurgency"
+BUNDLE_NAME = f"{APP_NAME}.{ORGANIZATION_NAME}.api"
 # Application definition
 
 INSTALLED_APPS = [
@@ -139,3 +141,4 @@ GOOGLE_OAUTH_SCOPE = [
 ]
 
 GOOGLE_USERINFO_URI = "https://www.googleapis.com/oauth2/v2/userinfo"
+GOOGLE_CUSTOM_LINK = f"{APP_NAME}://auth/google"

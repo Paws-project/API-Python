@@ -1,7 +1,7 @@
 from django.views import View
-from django.http import HttpRequest, JsonResponse
 from django.conf import settings
-from django.shortcuts import redirect, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, JsonResponse
+from django.shortcuts import redirect, HttpResponse 
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from rest_framework.views import APIView, Response, Request
@@ -11,7 +11,6 @@ from paws.authentication.models import GoogleAccount
 from paws.authentication.serializers import UserSerializer
 from paws.authentication.components.oauth_sessions import google
 
-from pprint import pprint
 from requests import get
 from urllib.parse import urlencode
 class AuthView(View):
@@ -22,17 +21,13 @@ class AuthView(View):
 class AuthCallbackView(View):
     def get(self, request: HttpRequest):
         try:
-            # print(request.headers)
             code = request.GET["code"]
         except KeyError as err:
-            print(err)
-            return JsonResponse({"message": f"Missing parameter(s)"}, status=422)
-
+            return JsonResponse({"message": f"Missing parameter(s): {err}"}, status=422)
+# TODO: Create classes for tokens and userdata
         tokens = google.token_exchange(code)
-        pprint(tokens)
-        print("--------------------------------------------------")
         userdata = google.get_bearer(settings.GOOGLE_USERINFO_URI, tokens["access_token"])
-        pprint(userdata)
+# TODO: Data validation and error handling
         user = User(
             username=userdata["email"],
             email=userdata["email"],
@@ -49,21 +44,25 @@ class AuthCallbackView(View):
             user.set_unusable_password()
             user.full_clean()
             account.full_clean(exclude=["user"])
+            user.save()
+            account.save()
         except ValidationError as err:
-            print(err)
-            return JsonResponse({"messages": f", ".join(err.messages)}, status=409)
+            pass
+            # return JsonResponse({
+            #     "messages": f", ".join(err.messages),
+            # }, status=409)
 
-        user.save()
-        account.save()
-        # TODO: Fix redirect to deep link
-        resp = HttpResponse("", status=302)
-        resp["Location"] = "paws://googleauth?" + urlencode({"user": user.pk, "access_token": tokens["access_token"]})
-        resp["Location"] = "http://api.pawsproject.com?" + urlencode({"user": user.pk, "access_token": tokens["access_token"]})
-        print(resp)
-        return resp
+
+        response = HttpResponse("", status=302)
+        redirect_uri = f"{settings.GOOGLE_CUSTOM_LINK}?{urlencode({'user': user.pk, 'access_token': tokens['access_token']})}"
+        response["Location"] = redirect_uri
+        del response["X-Frame-Options"]
+        del response["X-Content-Type-Options"]
+        return response
 
 
 class UserView(APIView):
     def get(self, request: Request, pk:int=0) -> Response:
         user = User.objects.get(pk=pk)
-        return Response(UserSerializer(user).data)
+        return Response(UserSerializer(user).data)        
+    
