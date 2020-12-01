@@ -1,13 +1,18 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from paws.authentication.models import Owner
+from paws.authentication.models import Owner, GoogleAccount
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "email"]
+        fields = ["username", "email", "first_name", "last_name"]
+
+class GoogleAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GoogleAccount
+        exclude = ["user"]
 
 class OwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Owner
-        fields = ["url", "profile", "passport", "passport_valid"]
+        fields = ["profile", "passport", "passport_valid"]

@@ -6,7 +6,7 @@ class Profile(models.Model):
     birth_date = models.DateField(verbose_name="Birth Date")
 
 class GoogleAccount(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False, blank=False)
     openid = models.CharField(max_length=60, verbose_name="Google OpenID")
     access_token = models.TextField(verbose_name="Acess Token")
     refresh_token = models.TextField(verbose_name="Refresh Token")

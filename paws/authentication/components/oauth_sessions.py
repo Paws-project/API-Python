@@ -35,7 +35,17 @@ class OAuthStrategy:
             return {}
 
     def token_refresh(self, refresh_token):
-        pass
+        data = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token
+        }
+        response = requests.post(settings.GOOGLE_TOKEN_URI, data=data)
+        if response.ok:
+            return response.json()
+        else:
+            return {}
 
     def get_bearer(self, uri, access_token:str):
         headers = {
@@ -47,6 +57,13 @@ class OAuthStrategy:
         else:
             return {}
 
+# TODO: Tokens class
+class Tokens:
+    pass
+
+# TODO: UserData class
+class GoogleUserData:
+     pass
 
 google = OAuthStrategy(
     client_id=settings.GOOGLE_CLIENT_ID,

@@ -8,10 +8,10 @@ from rest_framework.views import APIView, Response, Request
 
 
 from paws.authentication.models import GoogleAccount
-from paws.authentication.serializers import UserSerializer
+from paws.authentication.serializers import UserSerializer, GoogleAccountSerializer
 from paws.authentication.components.oauth_sessions import google
 
-from requests import get
+
 from urllib.parse import urlencode
 class AuthView(View):
     def get(self, request: HttpRequest):
@@ -27,38 +27,41 @@ class AuthCallbackView(View):
 # TODO: Create classes for tokens and userdata
         tokens = google.token_exchange(code)
         userdata = google.get_bearer(settings.GOOGLE_USERINFO_URI, tokens["access_token"])
-# TODO: Data validation and error handling
-        user = User(
-            username=userdata["email"],
-            email=userdata["email"],
-            first_name=userdata.get("given_name", ""),
-            last_name=userdata.get("family_name", "")
+
+# TODO: User signing in
+        user = UserSerializer(
+            data = {
+                "username": userdata["email"],
+                "email": userdata["email"],
+                "first_name": userdata.get("given_name", ""),
+                "last_name": userdata.get("family_name", "")
+            }
         )
-        account = GoogleAccount(
-            user=user,
-            openid=userdata.get("id", ""),
-            access_token=tokens["access_token"],
-            refresh_token=tokens["refresh_token"]
+        account = GoogleAccountSerializer(
+            data = {
+                "openid": userdata["id"],
+                "access_token": tokens["access_token"],
+                "refresh_token": tokens["refresh_token"]
+            }
         )
-        try:
-            user.set_unusable_password()
-            user.full_clean()
-            account.full_clean(exclude=["user"])
-            user.save()
-            account.save()
-        except ValidationError as err:
-            pass
+
+
+        if user.is_valid() and account.is_valid():
+            # Link and save models
+            user = user.save()
+            GoogleAccount(user=user, **account.validated_data).save()
+
+            response = HttpResponse("", status=302)
+            redirect_uri = f"{settings.GOOGLE_CUSTOM_LINK}?{urlencode({'user': user.pk, 'access_token': tokens['access_token']})}"
+            response["Location"] = redirect_uri
+            del response["X-Frame-Options"]
+            del response["X-Content-Type-Options"]
+            return response
+        else:
+            return JsonResponse({"message": "Data is invalid"}, status=409)
             # return JsonResponse({
             #     "messages": f", ".join(err.messages),
             # }, status=409)
-
-
-        response = HttpResponse("", status=302)
-        redirect_uri = f"{settings.GOOGLE_CUSTOM_LINK}?{urlencode({'user': user.pk, 'access_token': tokens['access_token']})}"
-        response["Location"] = redirect_uri
-        del response["X-Frame-Options"]
-        del response["X-Content-Type-Options"]
-        return response
 
 
 class UserView(APIView):
