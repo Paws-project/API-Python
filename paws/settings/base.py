@@ -40,15 +40,17 @@ INSTALLED_APPS = [
 
     # Apps
     'paws.authentication.apps.AuthenticationConfig',
+
+    'paws.pets.apps.PetsConfig',
     # Django rest framework
     "rest_framework" 
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ]
+# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

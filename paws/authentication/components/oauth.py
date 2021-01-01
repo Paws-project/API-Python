@@ -2,6 +2,29 @@ from django.conf import settings
 import requests
 from urllib.parse import urlencode
 
+
+class Tokens:
+    def __init__(self, **kwargs):
+        self.access_token = kwargs["access_token"]
+        self.refresh_token = kwargs["refresh_token"]
+        self.scope = kwargs["scope"]
+        self.token_type = kwargs["token_type"]
+        self.id_token = kwargs["id_token"]
+        self.access_token = kwargs["access_token"]
+        self.access_token = kwargs["access_token"]
+
+
+class GoogleUserData:
+    def __init__(self, **kwargs):
+        self.id = kwargs["id"]
+        self.email = kwargs["email"]
+        self.verified_email = kwargs["verified_email"]
+        self.picture = kwargs["picture"]
+        self.email = kwargs["email"]
+        self.given_name = kwargs.get("given_name", "")
+        self.family_name = kwargs.get("family_name", "")
+
+
 class OAuthStrategy:
     def __init__(self, client_id:str, client_secret:str, scope:list, redirect_uri:str):
         self.client_id = client_id
@@ -57,13 +80,7 @@ class OAuthStrategy:
         else:
             return {}
 
-# TODO: Tokens class
-class Tokens:
-    pass
 
-# TODO: UserData class
-class GoogleUserData:
-     pass
 
 google = OAuthStrategy(
     client_id=settings.GOOGLE_CLIENT_ID,

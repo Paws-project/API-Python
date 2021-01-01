@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    # Preview
-    path("api/", include("paws.authentication.urls")),
+    # TODO: Routes naming
+    path("auth/", include("paws.authentication.urls")),
+    path("pets/", include("paws.pets.urls")),
     path('admin/', admin.site.urls),
 ]
