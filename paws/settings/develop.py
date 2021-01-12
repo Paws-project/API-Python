@@ -9,4 +9,5 @@ SECRET_KEY = "notsecret"
 ALLOWED_HOSTS = [
     "localhost",
     "pawsproject.ddns.net",
+    "10.0.2.2"
 ]

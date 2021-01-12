@@ -40,7 +40,6 @@ INSTALLED_APPS = [
 
     # Apps
     'paws.authentication.apps.AuthenticationConfig',
-
     'paws.pets.apps.PetsConfig',
     # Django rest framework
     "rest_framework" 
