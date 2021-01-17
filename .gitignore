@@ -1,8 +1,5 @@
 # Editor
 .vscode/
-# For future exceptions
-# .vscode/
-# !.vscode/settings.json
 
 # Environment
 .env
@@ -17,3 +14,6 @@ paws/**/migrations/*
 
 # Data
 db.sqlite3
+
+# Tests
+example.rest

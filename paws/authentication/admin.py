@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from paws.authentication.models import GoogleAccount
-# Register your models here.
+# from paws.authentication.models import GoogleAccount
 
-@admin.register(GoogleAccount)
-class AdminGoogleAccount(admin.ModelAdmin):
-    pass
+# @admin.register(GoogleAccount)
+# class AdminGoogleAccount(admin.ModelAdmin):
+#     pass
